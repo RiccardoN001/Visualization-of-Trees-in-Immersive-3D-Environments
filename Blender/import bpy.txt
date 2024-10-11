@@ -1,0 +1,85 @@
+import bpy
+import math
+import bmesh
+import random
+from mathutils import *
+
+
+class TreeNode:
+    def __init__(self, location, bound, radius=1):
+        self.location = location
+        self.radius = radius
+        self.bound = bound;
+        self.children = []
+        
+def create_sphere(location, radius=1.0):
+    bpy.ops.mesh.primitive_uv_sphere_add(radius=radius, location=location)
+    
+def create_cylinder(start_location, end_location, radius=0.3):
+    start_location = Vector(start_location)
+    end_location = Vector(end_location)
+    
+    length = math.dist(start_location, end_location)
+    direction = end_location - start_location
+    rot_quat = direction.to_track_quat('Z', 'Y')
+
+    bpy.ops.mesh.primitive_cylinder_add(
+        radius=radius,
+        depth=length,
+        location=(start_location + end_location) / 2,
+        rotation=rot_quat.to_euler()
+    )
+    
+def draw_colored_rectangles(nodes):
+    # Elimina tutti gli oggetti esistenti nella scena
+    bpy.ops.object.select_all(action='DESELECT')
+    bpy.ops.object.select_by_type(type='MESH')
+    bpy.ops.object.delete()
+
+    for node in nodes:
+        v1, width, height = node.bound['vertex'], node.bound['width'], node.bound['height']
+        
+        center = (v1[0] + width / 2, v1[1] + height / 2, v1[2])# Calcola il centro del rettangolo
+        
+        bpy.ops.mesh.primitive_plane_add(size=1, enter_editmode=False, align='WORLD', location=center)
+
+        bpy.context.object.scale = (width , height , 1)# Scala il rettangolo
+
+        random_color = (random.random(), random.random(), random.random(), 1)# Genera un colore casuale
+
+        bpy.ops.object.material_slot_add()
+        bpy.context.object.material_slots[0].material = bpy.data.materials.new(name="ColorMaterial")
+        bpy.context.object.material_slots[0].material.use_nodes = False
+        bpy.context.object.material_slots[0].material.diffuse_color = random_color
+
+def draw_tree(root_node, parent_location): #ricorsivo
+    current_location = root_node.location #+ parent_location
+    create_sphere(current_location, radius=root_node.radius)
+
+    for child_node in root_node.children:
+        child_location = child_node.location
+        create_cylinder(current_location, child_location)
+        draw_tree(child_node, child_location)
+        
+
+root = TreeNode(location=(25.0,25.0,22.0+1), bound={'vertex': (0, 0, 0), 'width': 50, 'height': 50})
+node2 = TreeNode(location=(12.5, 25.0,  11.0+1), bound={'vertex': (0, 0, 0), 'width': 25, 'height': 50})
+node3 = TreeNode(location=(37.5, 6.25,  11.0+1), bound={'vertex': (25, 0, 0), 'width': 25, 'height': 12.5})
+node4 = TreeNode(location=(37.5, 31.25, 11.0+1), bound={'vertex': (25, 12.5, 0), 'width': 25, 'height': 37.5})
+node5 = TreeNode(location=(12.5, 8.333333333333332, 0.0+1), bound={'vertex': (0, 0, 0), 'width': 25, 'height': 16.666666666})
+node6 = TreeNode(location=(12.5, 25.0,  0.0+1), bound={'vertex': (0, 16.666666666, 0), 'width': 25, 'height': 16.666666})
+node7 = TreeNode(location=(12.5, 41.666666666666664, 0.0+1), bound={'vertex': (0, 33.3333333, 0), 'width': 25, 'height': 16.666666666666})
+node8 = TreeNode(location=(37.5, 21.875, 0.0+1), bound={'vertex': (25, 12.5, 0), 'width': 25, 'height': 18.75})
+node9 = TreeNode(location=(37.5, 40.625, 0.0+1), bound = {'vertex': (25, 31.25, 0), 'width': 25, 'height': 18.75})
+
+root.children.extend([node2, node3, node4])
+node2.children.extend([node5, node6, node7])
+node4.children.extend([node8, node9])
+
+nodes = [root, node2, node3, node4, node5, node6, node7, node8, node9]
+
+nodes_without_children = [node for node in nodes if not node.children] #Crea una lista contenente tutti i nodi che non hanno figli
+
+draw_colored_rectangles(nodes_without_children)
+
+draw_tree(root, parent_location=(0,0,0))

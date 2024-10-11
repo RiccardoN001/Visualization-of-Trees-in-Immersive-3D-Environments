@@ -1,0 +1,32 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "RandomTreeGenerator",
+            "request": "launch",
+            "mainClass": "RandomTreeGenerator",
+            "projectName": "Java_TreeMap_e21655df"
+        },
+        {
+            "type": "java",
+            "name": "CostruttoreAlbero",
+            "request": "launch",
+            "mainClass": "CostruttoreAlbero",
+            "projectName": "Java_TreeMap_e21655df"
+        },
+        {
+            "type": "java",
+            "name": "Tree",
+            "request": "launch",
+            "mainClass": "Tree",
+            "projectName": "Java_TreeMap_e21655df"
+        },
+        {
+            "type": "java",
+            "name": "Launch App",
+            "request": "launch",
+            "mainClass": "Test"
+        }
+    ]
+}
