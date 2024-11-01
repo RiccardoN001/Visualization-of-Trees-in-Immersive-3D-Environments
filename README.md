@@ -7,7 +7,6 @@ This repository contains the assets and code related to my bachelor thesis proje
 
 - [Overview](#overview)
 - [Repository Structure](#repository-structure)
-- [Dependencies](#dependencies)
 
 ## Overview
 
@@ -19,15 +18,3 @@ This project explores how tree data structures can be visualized in a 3D environ
 - **Java Code**: The core of the algorithm that implements tree structure generation and manipulation, written in Java.
 - **Tests**: A set of tests that generate random tree structures to evaluate the algorithm's functionality and performance.
 - **Blender File**: The python script to convert the coordinates generated from the algoritm into the tree actual visualization.
-
-
-## Dependencies
-
-### Java
-
-- Java Development Kit (JDK) 11 or higher
-
-### Blender
-
-- Blender version 3.0 or higher
-
